@@ -2,27 +2,40 @@ import { Request } from "express";
 import jwt from "jsonwebtoken";
 
 export async function expressAuthentication(
-  request: Request,
-  securityName: string,
-  scopes?: string[]
+    request: Request,
+    securityName: string,
+    scopes?: string[]
 ): Promise<any> {
 
-  if (securityName === "bearerAuth") {
-    const authHeader = request.headers.authorization;
+    if (securityName === "bearerAuth") {
+        const authHeader = request.headers.authorization;
 
-    if (!authHeader) {
-      throw new Error("No authorization header");
+        if (!authHeader) {
+            throw new Error("No authorization header");
+        }
+
+        const token = authHeader.replace("Bearer ", "");
+
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+            return decoded;
+        } catch {
+            throw new Error("Invalid token");
+        }
     }
 
-    const token = authHeader.replace("Bearer ", "");
+    throw new Error("Invalid security name");
+}
 
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET!);
-      return decoded;
-    } catch {
-      throw new Error("Invalid token");
+export function generateToken(user: {
+    id: string;
+}) {
+    const payload = {
+        sub: user.id
     }
-  }
 
-  throw new Error("Invalid security name");
+    return jwt.sign(payload, process.env.JWT_SECRET!, {
+        expiresIn: "1h",
+        issuer: "chatera",
+    });
 }

@@ -11,3 +11,77 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model User {
+  id            String @id @unique
+  username      String @unique
+  email         String @unique
+  password_hash String
+
+  createdAt   DateTime  @default(now())
+
+  members      Member[]
+  channelUsers ChannelUser[]
+  messages     Message[]
+}
+
+model Server {
+  id   String @id @unique
+  name String
+
+  createdAt   DateTime  @default(now())
+
+  members  Member[]
+  channels Channel[]
+}
+
+model Member {
+  id String @id @unique
+
+  userId   String
+  serverId String
+
+  user   User   @relation(fields: [userId], references: [id])
+  server Server @relation(fields: [serverId], references: [id])
+
+  createdAt   DateTime  @default(now())
+
+  @@unique([userId, serverId])
+}
+
+model Channel {
+  id   String  @id @unique
+  name String?
+
+  serverId String?
+  server   Server? @relation(fields: [serverId], references: [id])
+
+  users    ChannelUser[]
+  messages Message[]
+}
+
+model ChannelUser {
+  id String @id @unique
+
+  channelId String
+  userId    String
+
+  channel Channel @relation(fields: [channelId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+
+  @@unique([channelId, userId])
+}
+
+model Message {
+  id      String @id @unique
+  content String
+
+  channelId String
+  authorId  String
+
+  channel Channel @relation(fields: [channelId], references: [id])
+  author  User    @relation(fields: [authorId], references: [id])
+
+  createdAt     DateTime  @default(now())
+  modifiedAt    DateTime?
+}
