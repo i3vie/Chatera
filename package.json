@@ -1,7 +1,7 @@
 {
   "name": "chatera",
   "version": "0.0.0",
-  "description": "An open-source chat app with a unified API written in JavaScript, Express and Prisma",
+  "description": "An open-source chat app with a unified API written in TypeScript, Express+tsoa and Prisma",
   "homepage": "https://github.com/i3vie/chatera#readme",
   "bugs": {
     "url": "https://github.com/i3vie/chatera/issues"
@@ -13,8 +13,27 @@
   "license": "AGPL-3.0",
   "author": "i3vie",
   "type": "commonjs",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
+    "tsoa": "tsoa spec-and-routes",
+    "build": "npm run tsoa && tsc",
+    "start": "npm run build && node dist/index.js",
+    "dev": "tsc --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.4.0",
+    "@prisma/client": "^7.4.0",
+    "@tsoa/runtime": "^6.6.0",
+    "@types/express": "^5.0.6",
+    "express": "^5.2.1",
+    "prisma": "^7.4.0",
+    "swagger-ui-express": "^5.0.1",
+    "tsoa": "^6.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.4.0",
+    "@types/swagger-ui-express": "^4.1.8",
+    "typescript": "^5.9.2"
   }
 }
