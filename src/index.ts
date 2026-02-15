@@ -9,21 +9,32 @@ import { RegisterRoutes } from "./generated/routes";
 const app = express();
 const port = 36711;
 
+const isDev = process.env.NODE_ENV !== "production";
+
 app.use(express.json());
 RegisterRoutes(app);
 
 const openapiSpec = JSON.parse(
-  readFileSync(path.join(__dirname, "openapi.json"), "utf8")
+    readFileSync(path.join(__dirname, "openapi.json"), "utf8")
 );
 
 app.get("/docs.json", (_req, res) => {
-  res.json(openapiSpec);
+    res.json(openapiSpec);
 });
 
-app.use("/docs", swaggerUi.serve, swaggerUi.setup(openapiSpec));
+if (isDev) {
+    app.use("/docs", swaggerUi.serve, swaggerUi.setup(openapiSpec));
+} else {
+    app.use("/docs", swaggerUi.serve, swaggerUi.setup(openapiSpec, { // disable TIO for prod
+        swaggerOptions: {
+            tryItOutEnabled: false,
+            supportedSubmitMethods: [],
+        }
+    }));
+}
 
 app.listen(port, () => {
-  console.log(`Chatera server listening on ${port}`);
+    console.log(`Chatera server listening on ${port}`);
 });
 
 void prisma;

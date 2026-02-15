@@ -1,18 +1,29 @@
 {
   "entryFile": "src/index.ts",
+  "validation": {
+    "validateModel": true,
+    "noImplicitAdditionalProperties": "silently-remove-extras"
+  },
   "noImplicitAdditionalProperties": "silently-remove-extras",
   "controllerPathGlobs": [
-    "src/controllers/*_controller.ts"
+    "src/controllers/**/*_controller*.ts"
   ],
   "spec": {
     "outputDirectory": "dist",
     "specVersion": 3,
     "basePath": "/",
     "specFileBaseName": "openapi",
-    "securityDefinitions": {}
+    "securityDefinitions": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
   },
   "routes": {
     "routesDir": "src/generated",
-    "middleware": "express"
+    "middleware": "express",
+    "validation": true
   }
 }
